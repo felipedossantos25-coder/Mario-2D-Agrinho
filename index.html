@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Mario - 1 Fase</title>
+
+<style>
+body{
+    margin:0;
+    overflow:hidden;
+    background:#87CEEB;
+    font-family:Arial,sans-serif;
+}
+
+#game{
+    position:relative;
+    width:100vw;
+    height:100vh;
+}
+
+#ground{
+    position:absolute;
+    bottom:0;
+    width:100%;
+    height:100px;
+    background:#4CAF50;
+}
+
+#mario{
+    position:absolute;
+    width:50px;
+    height:50px;
+    background:red;
+    border-radius:8px;
+    left:50px;
+    bottom:100px;
+}
+
+.block{
+    position:absolute;
+    background:#8B4513;
+}
+
+.coin{
+    position:absolute;
+    width:25px;
+    height:25px;
+    background:gold;
+    border-radius:50%;
+}
+
+#flag{
+    position:absolute;
+    width:20px;
+    height:150px;
+    background:white;
+    right:80px;
+    bottom:100px;
+}
+
+#flag::after{
+    content:"";
+    position:absolute;
+    width:50px;
+    height:30px;
+    background:red;
+    left:20px;
+    top:0;
+}
+
+#ui{
+    position:absolute;
+    top:10px;
+    left:10px;
+    color:white;
+    font-size:24px;
+    text-shadow:2px 2px 2px black;
+}
+</style>
+</head>
+<body>
+
+<div id="game">
+    <div id="ui">Moedas: <span id="score">0</span></div>
+
+    <div id="mario"></div>
+
+    <div class="block" style="left:300px;bottom:180px;width:120px;height:20px;"></div>
+    <div class="block" style="left:550px;bottom:250px;width:120px;height:20px;"></div>
+
+    <div class="coin" id="coin1" style="left:340px;bottom:230px;"></div>
+
+    <div id="flag"></div>
+
+    <div id="ground"></div>
+</div>
+
+<script>
+const mario = document.getElementById("mario");
+const flag = document.getElementById("flag");
+const scoreEl = document.getElementById("score");
+const coin = document.getElementById("coin1");
+
+let x = 50;
+let y = 100;
+let vy = 0;
+let score = 0;
+
+const gravity = 0.8;
+const speed = 5;
+const jumpForce = 15;
+
+const keys = {};
+
+document.addEventListener("keydown", e => {
+    keys[e.key] = true;
+});
+
+document.addEventListener("keyup", e => {
+    keys[e.key] = false;
+});
+
+function rect(el){
+    return el.getBoundingClientRect();
+}
+
+function update(){
+
+    if(keys["ArrowRight"]) x += speed;
+    if(keys["ArrowLeft"]) x -= speed;
+
+    if((keys[" "] || keys["ArrowUp"]) && y <= 100){
+        vy = jumpForce;
+    }
+
+    vy -= gravity;
+    y += vy;
+
+    if(y < 100){
+        y = 100;
+        vy = 0;
+    }
+
+    mario.style.left = x + "px";
+    mario.style.bottom = y + "px";
+
+    // moeda
+    if(coin.style.display !== "none"){
+        const m = rect(mario);
+        const c = rect(coin);
+
+        if(
+            m.left < c.right &&
+            m.right > c.left &&
+            m.top < c.bottom &&
+            m.bottom > c.top
+        ){
+            coin.style.display = "none";
+            score++;
+            scoreEl.textContent = score;
+        }
+    }
+
+    // vitória
+    const m = rect(mario);
+    const f = rect(flag);
+
+    if(
+        m.left < f.right &&
+        m.right > f.left &&
+        m.top < f.bottom &&
+        m.bottom > f.top
+    ){
+        alert("🏆 Você completou a fase!");
+        location.reload();
+    }
+
+    requestAnimationFrame(update);
+}
+
+update();
+</script>
+
+</body>
+</html>
