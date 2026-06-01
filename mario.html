@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Mario HTML - 2 Fases</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #222;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: white;
+            font-family: sans-serif;
+        }
+        canvas {
+            border: 4px solid #fff;
+            background: #5c94fc; /* Azul céu tradicional do Mario */
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        #hud {
+            width: 800px;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="hud">
+        <div id="fase-txt">FASE: 1</div>
+        <div id="moedas-txt">MOEDAS: 0</div>
+    </div>
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Estado do Jogo
+        let faseAtual = 1;
+        let moedas = 0;
+        let jogoAtivo = true;
+
+        // Configurações do Jogador (Mario)
+        const mario = {
+            x: 50,
+            y: 300,
+            width: 30,
+            height: 40,
+            speed: 5,
+            velY: 0,
+            jumping: false,
+            cor: "#ff0000" // Vermelho Mario
+        };
+
+        // Física básica
+        const gravity = 0.6;
+        const groundY = 350;
+
+        // Elementos do Cenário (Fase 1)
+        let moedasLista = [{ x: 300, y: 250, coletada: false }, { x: 500, y: 200, coletada: false }];
+        let inim
